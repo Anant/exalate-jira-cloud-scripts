@@ -10,14 +10,18 @@ replica.labels         = issue.labels
 replica.comments       = issue.comments
 replica.resolution     = issue.resolution
 //replica.status         = issue.status
-//replica.parentId       = issue.parentId
+replica.parentId       = issue.parentId
 replica.priority       = issue.priority
 replica.attachments    = issue.attachments
 replica.project        = issue.project
 
-if( issue.type?.name != "Epic") {
-    replica.parentId = issue.parentId
-}
+    if(issue.type?.name == "Epic") {
+        issue.parentId = null
+    }
+    else {
+        replica.parentId = issue.parentId
+
+    }
 def statusMap = [
     "Dev Ready" : "To Do", 
     "In Progress" : "In Progress",
@@ -48,6 +52,9 @@ replica.description = null
  
 }
 
+if(issue.type?.name == "Epic") {
+   issue.parentId = null
+}
 
 /*
     Uncomment these lines if you want to send the full list of versions and components of the source project.

@@ -8,12 +8,14 @@ issue.description  = replica.description
 issue.comments     = commentHelper.mergeComments(issue, replica)
 issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
-issue.assignee = nodeHelper.getUser(replica.assignee.key) 
+//commenting this out because it is handled later in the code 
+//issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
 
 /* Custom Scripting
 */
-
+//next test - do I need to declare the type of issue - or just say for any issue != Epic
+//for sub-tasks, creates parent-child relationship which reflects the source - 
 if(firstSync && replica.parentId){
     issue.typeName     = "Sub-task" //Make sure to use the right subtask type here.
 	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
@@ -23,7 +25,7 @@ if(firstSync && replica.parentId){
        throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
     }
 }
-
+//for stories, creates parent-child relationship which reflects the source - 
 if(firstSync && replica.parentId){
     issue.typeName     = "Story" //Make sure to use the right subtask type here.
 	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
@@ -34,6 +36,7 @@ if(firstSync && replica.parentId){
     }
 
 }
+// allows for issue
 if(issue.assignee == null) {
     replica.assignee =  nodeHelper.getUser("unassigned")
 } else {
