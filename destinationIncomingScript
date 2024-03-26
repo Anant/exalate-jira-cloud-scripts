@@ -8,51 +8,60 @@ issue.description  = replica.description
 issue.comments     = commentHelper.mergeComments(issue, replica)
 issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
-issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
+//commenting this out because it is handled later in the code 
+//issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
-/* Custom Scripting
-*/
+//get priority from source
+def defaultPriority = nodeHelper.getPriority("Medium") 
+issue.priority = nodeHelper.getPriority(replica.priority?.name) ?: defaultPriority
 
-if(firstSync && replica.parentId){
-    issue.typeName     = "Sub-task" //Make sure to use the right subtask type here.
-	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
-	if(localParent){
-		issue.parentId = localParent.id
-	} else {
-       throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
-    }
-}
-
-if(firstSync && replica.parentId){
-    issue.typeName     = "Story" //Make sure to use the right subtask type here.
-	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
-	if(localParent){
-		issue.parentId = localParent.id
-	} else {
-       throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
-    }
-
-}
-if(issue.assignee == null) {
-    replica.assignee =  nodeHelper.getUser("unassigned")
-} else {
-    issue.assignee = nodeHelper.getUser(replica.assignee.key) 
-}
-
-
-issue.reporter = nodeHelper.getUser(replica.reporter.key)
-
+//map status from source
 def statusMap = [
-    "Dev Ready" : "To Do", 
+    "DEV READY" : "To Do", 
     "In Progress" : "In Progress",
     "Ready for QA" : "Ready for QA",
     "UAT" : "UAT",
     "Done" : "Done",
     "Closed/NoWork" : "Done",
 ]
+def remoteStatusName = replica.status.name
+issue.setStatus(statusMap[remoteStatusName] ?: remoteStatusName)
 
-replica.status = statusMap[issue.status.name] ?: issue.status.name
+if(replica.assignee?.key) {    
+    issue.assignee = nodeHelper.getUser(replica.assignee.key)
+} else {    
+    issue.assignee = nodeHelper.getUser("unassigned")
+}
+issue.reporter = nodeHelper.getUser(replica.reporter.key)
+
+
+if(firstSync && replica.parentId && issue.typeName != "Epic"){
+    def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
+    if(localParent){
+        issue.parentId = localParent.id	
+    } else { 
+        throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
+    }
+}
+
+
+
+// allows for issue that is unassigned to stay unassigned - circumventing null error
+// getting null error so trying different script from the ai at exalate
+/*
+if(issue.assignee = null) {
+    replica.assignee =  nodeHelper.getUser("unassigned")
+} else {
+    issue.assignee = nodeHelper.getUser(replica.assignee.key) 
+}
+issue.reporter = nodeHelper.getUser(replica.reporter.key)
+*/
+
+
+
+/* commenting out because this is defined in the Source Outgoing Sync
+
 
 /*
     Custom Fields (CF)

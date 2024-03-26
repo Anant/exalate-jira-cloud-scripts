@@ -9,15 +9,14 @@ replica.description    = issue.description
 replica.labels         = issue.labels
 replica.comments       = issue.comments
 replica.resolution     = issue.resolution
-//replica.status         = issue.status
-//replica.parentId       = issue.parentId
+replica.status         = issue.status
+replica.parentId       = issue.parentId
 replica.priority       = issue.priority
 replica.attachments    = issue.attachments
 replica.project        = issue.project
 
-if( issue.type?.name != "Epic") {
-    replica.parentId = issue.parentId
-}
+/*
+commenting this out because some docs say this status map should go on destination side.
 def statusMap = [
     "Dev Ready" : "To Do", 
     "In Progress" : "In Progress",
@@ -27,11 +26,11 @@ def statusMap = [
     "Closed/NoWork" : "Done",
 ]
 replica.status = statusMap[issue.status.name]?: issue.status.name
-
+*/
 } else {
     replica.key            = null
     replica.type           = null
-    replica.assignee    = null
+    replica.assignee        = null
     replica.reporter       = null
     replica.summary        = null
     replica.description    = null
@@ -43,8 +42,8 @@ replica.status = statusMap[issue.status.name]?: issue.status.name
     replica.priority       = null
     replica.attachments    = null
     replica.project        = null
-    replica.summary = null
-replica.description = null
+     replica.summary        = null
+    replica.description     = null
  
 }
 
