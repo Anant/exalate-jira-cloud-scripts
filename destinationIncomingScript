@@ -27,7 +27,7 @@ if(firstSync && replica.parentId){
 }
 
 // allows for issue that is unassigned to stay unassigned - circumventing null error
-if(issue.assignee == null) {
+if(issue.assignee = null) {
     replica.assignee =  nodeHelper.getUser("unassigned")
 } else {
     issue.assignee = nodeHelper.getUser(replica.assignee.key) 
