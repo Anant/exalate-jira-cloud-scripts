@@ -1,1 +1,107 @@
+if (firstSync) {
+    issue.projectKey  = "PARLER"
+    // Set the same issue type as the source issue. If not found, set a default.
+    issue.typeName    = nodeHelper.getIssueType(replica.type?.name, issue.projectKey)?.name ?: "Task"
+}
+issue.summary      = replica.summary
+issue.description  = replica.description
+issue.comments     = commentHelper.mergeComments(issue, replica)
+issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
+issue.labels       = replica.labels
+issue.assignee = nodeHelper.getUser(replica.assignee.key) 
+
+
+/* Custom Scripting
+*/
+
+if(firstSync && replica.parentId){
+    issue.typeName     = "Sub-task" //Make sure to use the right subtask type here.
+	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
+	if(localParent){
+		issue.parentId = localParent.id
+	} else {
+       throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
+    }
+}
+
+if(firstSync && replica.parentId){
+    issue.typeName     = "Story" //Make sure to use the right subtask type here.
+	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
+	if(localParent){
+		issue.parentId = localParent.id
+	} else {
+       throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
+    }
+
+}
+if(issue.assignee == null) {
+    replica.assignee =  nodeHelper.getUser("unassigned")
+} else {
+    issue.assignee = nodeHelper.getUser(replica.assignee.key) 
+}
+
+
+issue.reporter = nodeHelper.getUser(replica.reporter.key)
+
+def statusMap = [
+    "Dev Ready" : "To Do", 
+    "In Progress" : "In Progress",
+    "Ready for QA" : "Ready for QA",
+    "UAT" : "UAT",
+    "Done" : "Done",
+    "Closed/NoWork" : "Done",
+]
+
+replica.status = statusMap[issue.status.name] ?: issue.status.name
+
+/*
+    Custom Fields (CF)
+      To add incoming values to a Jira custom field, follow these steps:
+        1/ Find the Display Name of the CF. Note: If you have multiple custom fields with the same name,
+        then you can sync it using the custom field ID instead of its name. Know more about the steps here:
+        https://docs.exalate.com/docs/how-to-synchronize-custom-fields-in-jira-cloud
+        2/ Check how the value is coming over from the source side, by checking the "Entity Sync Status"
+        of an issue in sync and then selecting the "Show Remote Replica".
+        3/ Add it all together like this:
+        issue.customFields."CF Name".value = replica.customFields."CF Name".value
+
+*/
+
+/*
+    Status Synchronization
+      For Status sync, we map the source status, to the destination status with a hash map.
+      The syntax is as follows:
+      def statusMap = [
+        "remote status name": "local status name"
+      ]
+      Go to Entity Sync Status, put in the entity key, and it will show you where to find the remote replica
+      by clicking on Show remote replica.
+      def statusMap = [
+        "New"   : “Open",
+        "Done”  : ”Resolved”
+      ]
+      def remoteStatusName = replica.status.name
+      issue.setStatus(statusMap[remoteStatusName] ?: remoteStatusName)
+*/
+
+/*
+    User Synchronization (Assignee/Reporter)
+      Set a Reporter/Assignee from the source side. If the user can't be found, set a default user.
+        You can also use this approach for custom fields of the type User
+          def defaultUser = nodeHelper.getUserByEmail("default@exalate.com")
+          issue.reporter  = nodeHelper.getUserByEmail(replica.reporter?.email) ?: defaultUser
+          issue.assignee  = nodeHelper.getUserByEmail(replica.assignee?.email) ?: defaultUser
+*/
+
+/*
+    Comment Synchronization
+      Impersonate comments with the original author. The sync will work if the user already exists
+      in the local instance.
+      Note: Don’t forget to remove the original comments sync line if you are using this approach.
+      issue.comments = commentHelper.mergeComments(issue, replica) {
+        it.executor = nodeHelper.getUserByEmail(it.author?.email)
+      }
+*/
+
+// Exalate API Reference Documentation: https://docs.exalate.com/docs/exalate-api-reference-documentation
 
