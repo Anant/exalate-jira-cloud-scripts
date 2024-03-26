@@ -19,7 +19,7 @@ def statusMap = [
     "Done" : "Done",
     "Closed/NoWork" : "Done",
 ]
-replica.status = statusMap[issue.status.name]?: issue.status.name
+issue.setStatus(statusMapping[replica.status] ?: replica.status.name)
 
 
 if(firstSync && replica.parentId){
