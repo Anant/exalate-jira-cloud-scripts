@@ -11,7 +11,7 @@ issue.labels       = replica.labels
 //commenting this out because it is handled later in the code 
 //issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
-def statusMap = [
+def statusMapping = [
     "Dev Ready" : "To Do", 
     "In Progress" : "In Progress",
     "Ready for QA" : "Ready for QA",
