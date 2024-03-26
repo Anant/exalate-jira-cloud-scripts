@@ -10,18 +10,11 @@ replica.labels         = issue.labels
 replica.comments       = issue.comments
 replica.resolution     = issue.resolution
 replica.status         = issue.status
-//replica.parentId       = issue.parentId
+replica.parentId       = issue.parentId
 replica.priority       = issue.priority
 replica.attachments    = issue.attachments
 replica.project        = issue.project
 
-    if(issue.type?.name = "Epic") {
-        issue.parentId = null
-    }
-    else {
-        replica.parentId = issue.parentId
-
-    }
 /*
 commenting this out because some docs say this status map should go on destination side.
 def statusMap = [

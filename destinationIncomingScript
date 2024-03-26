@@ -28,6 +28,14 @@ def statusMap = [
 def remoteStatusName = replica.status.name
 issue.setStatus(statusMap[remoteStatusName] ?: remoteStatusName)
 
+if(replica.assignee?.key) {    
+    issue.assignee = nodeHelper.getUser(replica.assignee.key)
+} else {    
+    issue.assignee = nodeHelper.getUser("unassigned")
+}
+issue.reporter = nodeHelper.getUser(replica.reporter.key)
+
+
 if(firstSync && replica.parentId && issue.typeName != "Epic"){
     def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
     if(localParent){
@@ -36,6 +44,8 @@ if(firstSync && replica.parentId && issue.typeName != "Epic"){
         throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
     }
 }
+
+
 
 // allows for issue that is unassigned to stay unassigned - circumventing null error
 // getting null error so trying different script from the ai at exalate
@@ -48,12 +58,7 @@ if(issue.assignee = null) {
 issue.reporter = nodeHelper.getUser(replica.reporter.key)
 */
 
-if(issue.assignee == null) {
-    issue.assignee = nodeHelper.getUser("unassigned")
-} else {
-    issue.assignee = nodeHelper.getUser(replica.assignee.key)
-}
-issue.reporter = nodeHelper.getUser(replica.reporter.key)
+
 
 /* commenting out because this is defined in the Source Outgoing Sync
 
