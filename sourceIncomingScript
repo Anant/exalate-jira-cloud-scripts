@@ -10,6 +10,15 @@ issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
 issue.assignee     = replica.assignee
 
+if(firstSync && replica.parentId && issue.typeName != "Epic"){
+    def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
+    if(localParent){
+        issue.parentId = localParent.id	
+    } else { 
+        throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
+    }
+}
+
 /*
     Custom Fields (CF)
       To add incoming values to a Jira custom field, follow these steps:
