@@ -8,9 +8,15 @@ issue.description  = replica.description
 issue.comments     = commentHelper.mergeComments(issue, replica)
 issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
+
 //commenting this out because it is handled later in the code 
 //issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
+//get priority from source
+def defaultPriority = nodeHelper.getPriority("Medium") 
+issue.priority = nodeHelper.getPriority(replica.priority?.name) ?: defaultPriority
+
+//map status from source
 def statusMapping = [
     "Dev Ready" : "To Do", 
     "In Progress" : "In Progress",
