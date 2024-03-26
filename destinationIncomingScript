@@ -17,16 +17,16 @@ def defaultPriority = nodeHelper.getPriority("Medium")
 issue.priority = nodeHelper.getPriority(replica.priority?.name) ?: defaultPriority
 
 //map status from source
-def statusMapping = [
-    "Dev Ready" : "To Do", 
+def statusMap = [
+    "DEV READY" : "To Do", 
     "In Progress" : "In Progress",
     "Ready for QA" : "Ready for QA",
     "UAT" : "UAT",
     "Done" : "Done",
     "Closed/NoWork" : "Done",
 ]
-issue.setStatus(statusMapping[replica.status] ?: replica.status.name)
-
+def remoteStatusName = replica.status.name
+issue.setStatus(statusMap[remoteStatusName] ?: remoteStatusName)
 
 if(firstSync && replica.parentId && issue.typeName != "Epic"){
     def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
@@ -57,16 +57,7 @@ issue.reporter = nodeHelper.getUser(replica.reporter.key)
 
 /* commenting out because this is defined in the Source Outgoing Sync
 
-def statusMap = [
-    "Dev Ready" : "To Do", 
-    "In Progress" : "In Progress",
-    "Ready for QA" : "Ready for QA",
-    "UAT" : "UAT",
-    "Done" : "Done",
-    "Closed/NoWork" : "Done",
-]
-replica.status = statusMap[issue.status.name] ?: issue.status.name
-*/
+
 /*
     Custom Fields (CF)
       To add incoming values to a Jira custom field, follow these steps:
