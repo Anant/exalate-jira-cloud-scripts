@@ -19,6 +19,23 @@ if(firstSync && replica.parentId && issue.typeName != "Epic"){
     }
 }
 
+//map status from source
+def statusMap = [
+    "To Do" : "DEV READY", 
+    "In Progress" : "In Progress",
+    "Ready for QA" : "Ready for QA",
+    "UAT" : "UAT",
+    "Done" : "Done",
+]
+def remoteStatusName = replica.status.name
+issue.setStatus(statusMap[remoteStatusName] ?: remoteStatusName)
+
+//get priority from source
+def defaultPriority = nodeHelper.getPriority("Medium") 
+issue.priority = nodeHelper.getPriority(replica.priority?.name) ?: defaultPriority
+
+issue.reporter = nodeHelper.getUser(replica.reporter.key)
+
 /*
     Custom Fields (CF)
       To add incoming values to a Jira custom field, follow these steps:
