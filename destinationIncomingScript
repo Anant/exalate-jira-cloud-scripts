@@ -28,13 +28,12 @@ def statusMapping = [
 issue.setStatus(statusMapping[replica.status] ?: replica.status.name)
 
 
-if(firstSync && replica.parentId){
-    issue.typeName     != "Epic" //Make sure to use the right subtask type here.
-	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
-	if(localParent){
-		issue.parentId = localParent.id
-	} else {
-       throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
+if(firstSync && replica.parentId && issue.typeName != "Epic"){
+    def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
+    if(localParent){
+        issue.parentId = localParent.id	
+    } else { 
+        throw new com.exalate.api.exception.IssueTrackerException("Issue cannot be created: parent issue with remote id " + replica.parentId + " was not found. Please make sure the parent issue is synchronized before resolving this error" )
     }
 }
 

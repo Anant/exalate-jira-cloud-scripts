@@ -15,7 +15,7 @@ replica.priority       = issue.priority
 replica.attachments    = issue.attachments
 replica.project        = issue.project
 
-    if(issue.type?.name == "Epic") {
+    if(issue.type?.name = "Epic") {
         issue.parentId = null
     }
     else {
