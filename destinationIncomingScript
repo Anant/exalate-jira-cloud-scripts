@@ -11,11 +11,17 @@ issue.labels       = replica.labels
 //commenting this out because it is handled later in the code 
 //issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
+def statusMap = [
+    "Dev Ready" : "To Do", 
+    "In Progress" : "In Progress",
+    "Ready for QA" : "Ready for QA",
+    "UAT" : "UAT",
+    "Done" : "Done",
+    "Closed/NoWork" : "Done",
+]
+replica.status = statusMap[issue.status.name]?: issue.status.name
 
-/* Custom Scripting
-*/
-//next test - do I need to declare the type of issue - or just say for any issue != Epic
-//for sub-tasks, creates parent-child relationship which reflects the source - 
+
 if(firstSync && replica.parentId){
     issue.typeName     != "Epic" //Make sure to use the right subtask type here.
 	def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())

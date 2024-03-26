@@ -22,7 +22,8 @@ replica.project        = issue.project
         replica.parentId = issue.parentId
 
     }
-
+/*
+commenting this out because some docs say this status map should go on destination side.
 def statusMap = [
     "Dev Ready" : "To Do", 
     "In Progress" : "In Progress",
@@ -32,7 +33,7 @@ def statusMap = [
     "Closed/NoWork" : "Done",
 ]
 replica.status = statusMap[issue.status.name]?: issue.status.name
-
+*/
 } else {
     replica.key            = null
     replica.type           = null
