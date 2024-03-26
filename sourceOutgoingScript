@@ -1,0 +1,66 @@
+if (issue.status.name != "Backlog") {
+
+replica.key            = issue.key
+replica.type           = issue.type
+replica.assignee       = issue.assignee
+replica.reporter       = issue.reporter
+replica.summary        = issue.summary
+replica.description    = issue.description
+replica.labels         = issue.labels
+replica.comments       = issue.comments
+replica.resolution     = issue.resolution
+//replica.status         = issue.status
+//replica.parentId       = issue.parentId
+replica.priority       = issue.priority
+replica.attachments    = issue.attachments
+replica.project        = issue.project
+
+if( issue.type?.name != "Epic") {
+    replica.parentId = issue.parentId
+}
+def statusMap = [
+    "Dev Ready" : "To Do", 
+    "In Progress" : "In Progress",
+    "Ready for QA" : "Ready for QA",
+    "UAT" : "UAT",
+    "Done" : "Done",
+    "Closed/NoWork" : "Done",
+]
+replica.status = statusMap[issue.status.name]?: issue.status.name
+
+} else {
+    replica.key            = null
+    replica.type           = null
+    replica.assignee    = null
+    replica.reporter       = null
+    replica.summary        = null
+    replica.description    = null
+    replica.labels         = null
+    replica.comments       = null
+    replica.resolution     = null
+    replica.status         = null
+    replica.parentId       = null
+    replica.priority       = null
+    replica.attachments    = null
+    replica.project        = null
+    replica.summary = null
+replica.description = null
+ 
+}
+
+
+/*
+    Uncomment these lines if you want to send the full list of versions and components of the source project.
+    replica.project.versions = []
+    replica.project.components = []
+*/
+
+/*
+    Custom Fields (CF)
+      How to send any field value from the source side to the destination side.
+        1/ Add the value to the replica object using the Display Name of the specific field.
+        2/ Uncomment this next statement out and change accordingly:
+        replica.customFields."CF Name" = issue.customFields."CF Name"
+*/
+
+// Exalate API Reference Documentation: https://docs.exalate.com/docs/exalate-api-reference-documentation
