@@ -19,13 +19,13 @@ issue.priority = nodeHelper.getPriority(replica.priority?.name) ?: defaultPriori
 //map status from source
 def statusMap = [
     "DEV READY" : "To Do", 
-    "REOPENED" : "To Do", 
+    "Reopened" : "To Do", 
     "In Progress" : "In Progress",
     "Ready for QA" : "Ready for QA",
     "UAT" : "UAT",
     "Done" : "Done",
-    "Closed/NoWork" : "Done",
-    "ON HOLD" : "ON HOLD"
+    "CLOSED/NO WORK" : "Done",
+    "ON HOLD" : "ON HOLD",
 ]
 def remoteStatusName = replica.status.name
 issue.setStatus(statusMap[remoteStatusName] ?: remoteStatusName)
