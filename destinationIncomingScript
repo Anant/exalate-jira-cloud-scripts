@@ -9,6 +9,13 @@ issue.comments     = commentHelper.mergeComments(issue, replica)
 issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
 
+//set the custom field as Work Item on Anant Jira
+def customField = issue.customFields.'TicketType'
+if (customField.value?.value != "Work Item") {
+    customField.value = nodeHelper.getOption(issue, '10129', 'Works Item');
+}
+
+
 //commenting this out because it is handled later in the code 
 //issue.assignee = nodeHelper.getUser(replica.assignee.key) 
 
@@ -115,4 +122,3 @@ issue.reporter = nodeHelper.getUser(replica.reporter.key)
 */
 
 // Exalate API Reference Documentation: https://docs.exalate.com/docs/exalate-api-reference-documentation
-
