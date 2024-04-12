@@ -13,6 +13,9 @@ replica.priority       = issue.priority
 replica.attachments    = issue.attachments
 replica.project        = issue.project
 
+//This tells the outgoing sync from the destination that the custom field Work order / priority should be included as a field in the sync from destination to source.
+replica."Work order / priority" = issue."Work order / priority"
+
 /*
     Uncomment these lines if you want to send the full list of versions and components of the source project.
     replica.project.versions = []
@@ -28,4 +31,3 @@ replica.project        = issue.project
 */
 
 // Exalate API Reference Documentation: https://docs.exalate.com/docs/exalate-api-reference-documentation
-
