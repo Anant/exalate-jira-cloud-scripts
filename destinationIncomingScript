@@ -3,13 +3,17 @@ if (firstSync) {
     // Set the same issue type as the source issue. If not found, set a default.
     issue.typeName    = nodeHelper.getIssueType(replica.type?.name, issue.projectKey)?.name ?: "Task"
 }
+
+
 issue.summary      = replica.summary
 issue.description  = replica.description
 issue.comments     = commentHelper.mergeComments(issue, replica)
 issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
 
-//set the custom field as Work Item on Anant Jira
+//This tell the destination side to update the Work order / priority custom field with the data from the source custom field Work Order.
+issue."Work order / priority" = replica."Work Order"
+
 def customField = issue.customFields.'TicketType'
 if (customField.value?.value != "Work Item") {
     customField.value = nodeHelper.getOption(issue, '10129', 'Works Item');
