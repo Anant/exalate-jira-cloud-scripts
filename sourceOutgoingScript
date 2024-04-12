@@ -14,6 +14,8 @@ replica.parentId       = issue.parentId
 replica.priority       = issue.priority
 replica.attachments    = issue.attachments
 replica.project        = issue.project
+//This defines the custom field Work Order as a field that should be included in the outgoing sync.
+replica."Work Order" = issue."Work Order"
 
 /*
 commenting this out because some docs say this status map should go on destination side.
