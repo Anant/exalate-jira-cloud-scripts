@@ -10,6 +10,9 @@ issue.attachments  = attachmentHelper.mergeAttachments(issue, replica)
 issue.labels       = replica.labels
 issue.assignee     = replica.assignee
 
+//This allows the custom field Work Order in the Source to be updated with the information from custom field Work order / priority from the destination.
+issue."Work Order" = replica."Work order / priority"
+
 if(firstSync && replica.parentId && issue.typeName != "Epic"){
     def localParent = nodeHelper.getLocalIssueFromRemoteId(replica.parentId.toLong())
     if(localParent){
